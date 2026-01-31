@@ -1,0 +1,111 @@
+export function ControlsPanel({
+  rows,
+  setRows,
+  cols,
+  setCols,
+  orientation,
+  setOrientation,
+  gridEnabled,
+  setGridEnabled,
+  gridColor,
+  setGridColor,
+  gridThickness,
+  setGridThickness,
+  onGenerate,
+  canGenerate,
+}) {
+  return (
+    <div className="controls-panel">
+      <div className="control-group">
+        <h3>Layout</h3>
+        <div className="control-row">
+          <label htmlFor="rows">Rows</label>
+          <input
+            type="number"
+            id="rows"
+            min="1"
+            value={rows}
+            onChange={(e) => setRows(Math.max(1, parseInt(e.target.value) || 1))}
+          />
+        </div>
+        <div className="control-row">
+          <label htmlFor="cols">Columns</label>
+          <input
+            type="number"
+            id="cols"
+            min="1"
+            value={cols}
+            onChange={(e) => setCols(Math.max(1, parseInt(e.target.value) || 1))}
+          />
+        </div>
+      </div>
+
+      <div className="control-group">
+        <h3>Orientation</h3>
+        <div className="orientation-toggle">
+          <button
+            className={`orientation-btn ${orientation === 'portrait' ? 'active' : ''}`}
+            onClick={() => setOrientation('portrait')}
+          >
+            Portrait
+          </button>
+          <button
+            className={`orientation-btn ${orientation === 'landscape' ? 'active' : ''}`}
+            onClick={() => setOrientation('landscape')}
+          >
+            Landscape
+          </button>
+        </div>
+      </div>
+
+      <div className="control-group">
+        <h3>Grid Lines</h3>
+        <div className="control-row checkbox-row">
+          <input
+            type="checkbox"
+            id="gridEnabled"
+            checked={gridEnabled}
+            onChange={(e) => setGridEnabled(e.target.checked)}
+          />
+          <label htmlFor="gridEnabled">Draw internal grid lines</label>
+        </div>
+        {gridEnabled && (
+          <>
+            <div className="control-row">
+              <label htmlFor="gridColor">Color</label>
+              <input
+                type="color"
+                id="gridColor"
+                value={gridColor}
+                onChange={(e) => setGridColor(e.target.value)}
+              />
+              <span className="color-value">{gridColor}</span>
+            </div>
+            <div className="control-row">
+              <label htmlFor="gridThickness">Thickness (mm)</label>
+              <input
+                type="number"
+                id="gridThickness"
+                min="0.1"
+                max="5"
+                step="0.1"
+                value={gridThickness}
+                onChange={(e) =>
+                  setGridThickness(Math.max(0.1, parseFloat(e.target.value) || 0.5))
+                }
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      <button
+        className="generate-btn"
+        onClick={onGenerate}
+        disabled={!canGenerate}
+      >
+        Generate PDF
+      </button>
+    </div>
+  );
+}
