@@ -15,8 +15,8 @@ function App() {
   const [orientation, setOrientation] = useState('portrait');
 
   // Grid line state
-  const [gridEnabled, setGridEnabled] = useState(false);
-  const [gridColor, setGridColor] = useState('#000000');
+  const [gridEnabled, setGridEnabled] = useState(true);
+  const [gridColor, setGridColor] = useState('#c4c4c4');
   const [gridThickness, setGridThickness] = useState(0.5);
 
   // PDF state
@@ -26,41 +26,47 @@ function App() {
   // Error state
   const [errors, setErrors] = useState([]);
 
-  const handleImagesLoaded = useCallback((loadedImages) => {
-    setImages(loadedImages);
-    // Clear previous PDF when new images are loaded
-    if (prevPdfUrlRef.current) {
-      URL.revokeObjectURL(prevPdfUrlRef.current);
-      prevPdfUrlRef.current = null;
-    }
-    setPdfUrl(null);
-  }, []);
-
-  const handleGenerate = useCallback(() => {
-    if (images.length < 2) {
-      setErrors(['Please load at least 2 images first.']);
-      return;
-    }
-
+  const createPdfUrl = useCallback((imagesToUse, settings) => {
     // Revoke previous URL to prevent memory leak
     if (prevPdfUrlRef.current) {
       URL.revokeObjectURL(prevPdfUrlRef.current);
     }
 
     const blob = generatePdf({
-      images,
-      rows,
-      cols,
-      orientation,
-      gridEnabled,
-      gridColor,
-      gridThickness,
+      images: imagesToUse,
+      ...settings,
     });
 
     const url = URL.createObjectURL(blob);
     prevPdfUrlRef.current = url;
+    return url;
+  }, []);
+
+  const handleImagesLoaded = useCallback((loadedImages) => {
+    setImages(loadedImages);
+
+    // Auto-generate PDF if < 40 images
+    if (loadedImages.length >= 2 && loadedImages.length < 40) {
+      const url = createPdfUrl(loadedImages, { rows, cols, orientation, gridEnabled, gridColor, gridThickness });
+      setPdfUrl(url);
+    } else {
+      // Clear PDF for invalid counts
+      if (prevPdfUrlRef.current) {
+        URL.revokeObjectURL(prevPdfUrlRef.current);
+        prevPdfUrlRef.current = null;
+      }
+      setPdfUrl(null);
+    }
+  }, [createPdfUrl, rows, cols, orientation, gridEnabled, gridColor, gridThickness]);
+
+  const handleGenerate = useCallback(() => {
+    if (images.length < 2) {
+      setErrors(['Please load at least 2 images first.']);
+      return;
+    }
+    const url = createPdfUrl(images, { rows, cols, orientation, gridEnabled, gridColor, gridThickness });
     setPdfUrl(url);
-  }, [images, rows, cols, orientation, gridEnabled, gridColor, gridThickness]);
+  }, [images, createPdfUrl, rows, cols, orientation, gridEnabled, gridColor, gridThickness]);
 
   const canGenerate = images.length >= 2;
 
