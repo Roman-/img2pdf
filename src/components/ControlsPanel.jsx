@@ -11,6 +11,8 @@ export function ControlsPanel({
   setGridColor,
   gridThickness,
   setGridThickness,
+  imageOrder,
+  setImageOrder,
   onGenerate,
   canGenerate,
 }) {
@@ -37,6 +39,18 @@ export function ControlsPanel({
             value={cols}
             onChange={(e) => setCols(Math.max(1, parseInt(e.target.value) || 1))}
           />
+        </div>
+        <div className="control-row">
+          <label htmlFor="imageOrder">Image Order</label>
+          <select
+            id="imageOrder"
+            value={imageOrder}
+            onChange={(e) => setImageOrder(e.target.value)}
+          >
+            <option value="same">Same order</option>
+            <option value="reverse">Reverse order</option>
+            <option value="random">Random order</option>
+          </select>
         </div>
       </div>
 
