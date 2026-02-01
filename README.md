@@ -1,12 +1,12 @@
-# PNG to PDF Grid Converter
+# img2pdf - Image to PDF Grid Converter
 
-A web application that converts multiple PNG images into a single PDF document with a customizable grid layout.
+A web application that converts multiple images into a single PDF document with a customizable grid layout.
 
 ![Screenshot](img/png2pdf.jpg)
 
 ## Features
 
-- **Drag & Drop** - Easily upload multiple PNG files at once
+- **Drag & Drop** - Easily upload multiple image files at once
 - **Grid Layout** - Arrange images in a customizable grid (rows × columns)
 - **Orientation** - Choose between portrait and landscape PDF output
 - **Grid Lines** - Add optional grid lines with customizable color and thickness
@@ -52,7 +52,7 @@ npm run preview
 
 ## Usage
 
-1. Drag and drop PNG images onto the drop zone (or click to select files)
+1. Drag and drop images onto the drop zone (or click to select files)
 2. Adjust the grid layout (rows and columns)
 3. Choose orientation (portrait or landscape)
 4. Optionally enable grid lines and customize their appearance
