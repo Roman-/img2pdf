@@ -69,6 +69,7 @@ function App() {
 
   // PDF state
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfSize, setPdfSize] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const prevPdfUrlRef = useRef(null);
   const generateTimeoutRef = useRef(null);
@@ -106,6 +107,7 @@ function App() {
 
     const url = URL.createObjectURL(blob);
     prevPdfUrlRef.current = url;
+    setPdfSize(blob.size);
     return url;
   }, [orderImages]);
 
@@ -129,6 +131,7 @@ function App() {
         prevPdfUrlRef.current = null;
       }
       setPdfUrl(null);
+      setPdfSize(null);
       setIsGenerating(false);
     }
   }, [createPdfUrl, rows, cols, orientation, gridEnabled, gridColor, gridThickness, imageOrder]);
@@ -217,6 +220,11 @@ function App() {
 
   const pdfFilename = useMemo(() => generatePdfFilename(images), [images]);
 
+  const pageCount = useMemo(() => {
+    if (images.length === 0) return 0;
+    return Math.ceil(images.length / (rows * cols));
+  }, [images.length, rows, cols]);
+
   return (
     <div {...getRootProps()} className={`app ${isDragActive ? 'app-drag-active' : ''}`}>
       <input {...getInputProps()} />
@@ -275,6 +283,9 @@ function App() {
             canGenerate={canGenerate}
             pdfUrl={pdfUrl}
             pdfFilename={pdfFilename}
+            imageCount={images.length}
+            pageCount={pageCount}
+            pdfSize={pdfSize}
           />
         </div>
         <div className="right-panel">

@@ -1,3 +1,10 @@
+function formatFileSize(bytes) {
+  if (bytes === null || bytes === undefined) return '';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function ControlsPanel({
   rows,
   setRows,
@@ -17,6 +24,9 @@ export function ControlsPanel({
   canGenerate,
   pdfUrl,
   pdfFilename,
+  imageCount,
+  pageCount,
+  pdfSize,
 }) {
   const handleDownload = () => {
     if (!pdfUrl) return;
@@ -122,6 +132,20 @@ export function ControlsPanel({
           </>
         )}
       </div>
+
+      {imageCount > 0 && (
+        <div className="pdf-summary">
+          <span>{imageCount} images</span>
+          <span className="separator">→</span>
+          <span>{pageCount} {pageCount === 1 ? 'page' : 'pages'}</span>
+          {pdfSize && (
+            <>
+              <span className="separator">•</span>
+              <span>{formatFileSize(pdfSize)}</span>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="button-row">
         <button
