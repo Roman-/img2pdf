@@ -31,7 +31,6 @@ export function ControlsPanel({
   return (
     <div className="controls-panel">
       <div className="control-group">
-        <h3>Layout</h3>
         <div className="control-row">
           <label htmlFor="rows">Rows</label>
           <input
@@ -67,7 +66,6 @@ export function ControlsPanel({
       </div>
 
       <div className="control-group">
-        <h3>Orientation</h3>
         <div className="orientation-toggle">
           <button
             className={`orientation-btn ${orientation === 'portrait' ? 'active' : ''}`}
