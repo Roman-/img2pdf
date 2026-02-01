@@ -35,7 +35,7 @@ function generatePdfFilename(images) {
 
   const baseNames = images.map(img => {
     const name = img.name || '';
-    return name.replace(/\.png$/i, '');
+    return name.replace(/\.(png|jpe?g|gif|webp|bmp|svg|tiff?|avif|heic)$/i, '');
   });
 
   const prefix = findCommonPrefix(baseNames);
@@ -142,14 +142,14 @@ function App() {
 
       if (fileRejections.length > 0) {
         const invalidFiles = fileRejections.map((r) => r.file.name).join(', ');
-        newErrors.push(`Invalid files (only PNG allowed): ${invalidFiles}`);
+        newErrors.push(`Invalid files (only images allowed): ${invalidFiles}`);
       }
 
-      const pngFiles = acceptedFiles.filter(
-        (f) => f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
+      const imageFiles = acceptedFiles.filter(
+        (f) => f.type.startsWith('image/')
       );
 
-      if (pngFiles.length < 2) {
+      if (imageFiles.length < 2) {
         newErrors.push('Please drop a batch (2+ files) at once.');
         setErrors(newErrors);
         return;
@@ -157,7 +157,7 @@ function App() {
 
       setErrors(newErrors);
 
-      const loadPromises = pngFiles.map((file) => {
+      const loadPromises = imageFiles.map((file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.onload = (e) => {
@@ -201,7 +201,7 @@ function App() {
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
-    accept: { 'image/png': ['.png'] },
+    accept: { 'image/*': [] },
     multiple: true,
     noClick: true,
     noKeyboard: true,
@@ -233,18 +233,18 @@ function App() {
         <div className="drag-overlay">
           <div className="drag-overlay-content">
             <div className="drag-icon">📁</div>
-            <p>Drop PNG files here</p>
+            <p>Drop images here</p>
           </div>
         </div>
       )}
 
       <header className="app-header">
-        <h1>PNG to PDF Grid Converter</h1>
+        <h1>Images to PDF Grid Converter</h1>
         <p className="header-hint">
           {images.length > 0 ? (
             <>{images.length} images loaded — drop more to replace, or <button type="button" className="link-button" onClick={open}>click here</button> to select</>
           ) : (
-            <>Drop a batch of PNG files anywhere on the page, or <button type="button" className="link-button" onClick={open}>click here</button> to select them from your computer.</>
+            <>Drop a batch of images anywhere on the page, or <button type="button" className="link-button" onClick={open}>click here</button> to select them from your computer.</>
           )}
         </p>
       </header>
