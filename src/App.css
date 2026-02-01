@@ -42,7 +42,8 @@
   opacity: 0.8;
 }
 
-.errors {
+/* Messages (errors and warnings) */
+.messages {
   padding: 0.5rem 2rem;
 }
 
@@ -52,10 +53,27 @@
   padding: 0.75rem 1rem;
   border-radius: 4px;
   margin-bottom: 0.5rem;
+  white-space: pre-line;
+  font-size: 0.875rem;
 }
 
-.error-message.warning {
+.warning-message {
   background: #f39c12;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Loading progress */
+.loading-progress {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  display: inline-block;
 }
 
 .app-main {
@@ -246,9 +264,10 @@
 /* PDF Summary */
 .pdf-summary {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   padding: 0.75rem;
   background: #f8f9fa;
   border-radius: 4px;
@@ -256,8 +275,19 @@
   color: #2c3e50;
 }
 
+.pdf-summary .summary-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .pdf-summary .separator {
   color: #bdc3c7;
+}
+
+.cell-size-info {
+  font-size: 0.75rem;
+  color: #7f8c8d;
 }
 
 /* Button Row */
@@ -288,6 +318,11 @@
   cursor: not-allowed;
 }
 
+.generate-btn.generating {
+  background: #2980b9;
+  cursor: wait;
+}
+
 .download-btn {
   width: 44px;
   height: 44px;
@@ -309,6 +344,30 @@
 .download-btn:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
+}
+
+/* Config error hint */
+.config-error-hint {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #e74c3c;
+  padding: 0.5rem;
+  background: #fdedec;
+  border-radius: 4px;
+}
+
+/* Disabled inputs */
+.control-row input:disabled,
+.control-row select:disabled,
+.separator-select:disabled,
+.orientation-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.orientation-btn:disabled.active {
+  background: #85c1e9;
 }
 
 /* PDF Preview */

@@ -27,9 +27,12 @@ export function ControlsPanel({
   imageCount,
   pageCount,
   pdfSize,
+  isGenerating,
+  cellSize,
+  hasConfigErrors,
 }) {
   const handleDownload = () => {
-    if (!pdfUrl) return;
+    if (!pdfUrl || isGenerating) return;
 
     const link = document.createElement('a');
     link.href = pdfUrl;
@@ -38,6 +41,21 @@ export function ControlsPanel({
     link.click();
     document.body.removeChild(link);
   };
+
+  // Determine if inputs should be disabled (during generation)
+  const inputsDisabled = isGenerating;
+
+  // Helper to safely set integer values
+  const handleRowsChange = (e) => {
+    const value = parseInt(e.target.value) || 1;
+    setRows(Math.max(1, Math.round(value)));
+  };
+
+  const handleColsChange = (e) => {
+    const value = parseInt(e.target.value) || 1;
+    setCols(Math.max(1, Math.round(value)));
+  };
+
   return (
     <div className="controls-panel">
       <div className="control-group">
@@ -47,8 +65,10 @@ export function ControlsPanel({
             type="number"
             id="rows"
             min="1"
+            max="100"
             value={rows}
-            onChange={(e) => setRows(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={handleRowsChange}
+            disabled={inputsDisabled}
           />
         </div>
         <div className="control-row">
@@ -57,8 +77,10 @@ export function ControlsPanel({
             type="number"
             id="cols"
             min="1"
+            max="100"
             value={cols}
-            onChange={(e) => setCols(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={handleColsChange}
+            disabled={inputsDisabled}
           />
         </div>
         <div className="control-row">
@@ -67,6 +89,7 @@ export function ControlsPanel({
             id="imageOrder"
             value={imageOrder}
             onChange={(e) => setImageOrder(e.target.value)}
+            disabled={inputsDisabled}
           >
             <option value="same">Same order</option>
             <option value="reverse">Reverse order</option>
@@ -80,12 +103,14 @@ export function ControlsPanel({
           <button
             className={`orientation-btn ${orientation === 'portrait' ? 'active' : ''}`}
             onClick={() => setOrientation('portrait')}
+            disabled={inputsDisabled}
           >
             Portrait
           </button>
           <button
             className={`orientation-btn ${orientation === 'landscape' ? 'active' : ''}`}
             onClick={() => setOrientation('landscape')}
+            disabled={inputsDisabled}
           >
             Landscape
           </button>
@@ -98,6 +123,7 @@ export function ControlsPanel({
           value={gridEnabled}
           onChange={(e) => setGridEnabled(e.target.value)}
           className="separator-select"
+          disabled={inputsDisabled}
         >
           <option value="none">No separators</option>
           <option value="solid">Solid line separator</option>
@@ -112,6 +138,7 @@ export function ControlsPanel({
                 id="gridColor"
                 value={gridColor}
                 onChange={(e) => setGridColor(e.target.value)}
+                disabled={inputsDisabled}
               />
               <span className="color-value">{gridColor}</span>
             </div>
@@ -127,6 +154,7 @@ export function ControlsPanel({
                 onChange={(e) =>
                   setGridThickness(Math.max(0.1, parseFloat(e.target.value) || 0.5))
                 }
+                disabled={inputsDisabled}
               />
             </div>
           </>
@@ -135,30 +163,37 @@ export function ControlsPanel({
 
       {imageCount > 0 && (
         <div className="pdf-summary">
-          <span>{imageCount} images</span>
-          <span className="separator">→</span>
-          <span>{pageCount} {pageCount === 1 ? 'page' : 'pages'}</span>
-          {pdfSize && (
-            <>
-              <span className="separator">•</span>
-              <span>{formatFileSize(pdfSize)}</span>
-            </>
+          <div className="summary-row">
+            <span>{imageCount} images</span>
+            <span className="separator">→</span>
+            <span>{pageCount} {pageCount === 1 ? 'page' : 'pages'}</span>
+            {pdfSize && (
+              <>
+                <span className="separator">•</span>
+                <span>{formatFileSize(pdfSize)}</span>
+              </>
+            )}
+          </div>
+          {cellSize && (
+            <div className="cell-size-info">
+              Cell size: {cellSize.w.toFixed(1)} × {cellSize.h.toFixed(1)} mm
+            </div>
           )}
         </div>
       )}
 
       <div className="button-row">
         <button
-          className="generate-btn"
+          className={`generate-btn ${isGenerating ? 'generating' : ''}`}
           onClick={onGenerate}
           disabled={!canGenerate}
         >
-          Generate PDF
+          {isGenerating ? 'Generating...' : 'Generate PDF'}
         </button>
         <button
           className="download-btn"
           onClick={handleDownload}
-          disabled={!pdfUrl}
+          disabled={!pdfUrl || isGenerating}
           title={pdfFilename || 'Download PDF'}
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -166,6 +201,12 @@ export function ControlsPanel({
           </svg>
         </button>
       </div>
+
+      {hasConfigErrors && (
+        <div className="config-error-hint">
+          Please fix the configuration errors above before generating.
+        </div>
+      )}
     </div>
   );
 }
