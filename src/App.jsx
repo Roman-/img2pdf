@@ -1,9 +1,58 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { DropzoneArea } from './components/DropzoneArea';
 import { ControlsPanel } from './components/ControlsPanel';
 import { PdfPreview } from './components/PdfPreview';
 import { generatePdf } from './utils/pdfGenerator';
 import './App.css';
+
+/**
+ * Find the longest common prefix of an array of strings
+ */
+function findCommonPrefix(strings) {
+  if (!strings.length) return '';
+  if (strings.length === 1) return strings[0];
+
+  const first = strings[0];
+  let prefixLength = 0;
+
+  for (let i = 0; i < first.length; i++) {
+    const char = first[i];
+    if (strings.every(s => s[i] === char)) {
+      prefixLength = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  return first.slice(0, prefixLength);
+}
+
+/**
+ * Generate a PDF filename from image names
+ */
+function generatePdfFilename(images) {
+  if (!images.length) return 'document.pdf';
+
+  // Get base names without extension
+  const baseNames = images.map(img => {
+    const name = img.name || '';
+    return name.replace(/\.png$/i, '');
+  });
+
+  const prefix = findCommonPrefix(baseNames);
+
+  // Clean up trailing separators/numbers from prefix
+  const cleanedPrefix = prefix.replace(/[-_.\s\d]+$/, '').trim();
+
+  if (cleanedPrefix.length >= 3) {
+    return `${cleanedPrefix}.pdf`;
+  }
+
+  // Fallback: use current date
+  const date = new Date();
+  const dateStr = date.toISOString().slice(0, 10);
+  return `images-${dateStr}.pdf`;
+}
 
 function App() {
   // Image state
@@ -91,6 +140,8 @@ function App() {
 
   const canGenerate = images.length >= 2;
 
+  const pdfFilename = useMemo(() => generatePdfFilename(images), [images]);
+
   return (
     <div className="app">
       <header className="app-header">
@@ -134,6 +185,8 @@ function App() {
             setImageOrder={setImageOrder}
             onGenerate={handleGenerate}
             canGenerate={canGenerate}
+            pdfUrl={pdfUrl}
+            pdfFilename={pdfFilename}
           />
         </div>
         <div className="right-panel">

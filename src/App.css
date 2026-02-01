@@ -228,8 +228,14 @@
   color: white;
 }
 
-/* Generate Button */
+/* Button Row */
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .generate-btn {
+  flex: 1;
   padding: 0.875rem 1.5rem;
   background: #27ae60;
   color: white;
@@ -246,6 +252,29 @@
 }
 
 .generate-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.download-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.download-btn:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.download-btn:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
 }

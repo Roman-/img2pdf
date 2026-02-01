@@ -15,7 +15,19 @@ export function ControlsPanel({
   setImageOrder,
   onGenerate,
   canGenerate,
+  pdfUrl,
+  pdfFilename,
 }) {
+  const handleDownload = () => {
+    if (!pdfUrl) return;
+
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = pdfFilename || 'document.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   return (
     <div className="controls-panel">
       <div className="control-group">
@@ -113,13 +125,25 @@ export function ControlsPanel({
         )}
       </div>
 
-      <button
-        className="generate-btn"
-        onClick={onGenerate}
-        disabled={!canGenerate}
-      >
-        Generate PDF
-      </button>
+      <div className="button-row">
+        <button
+          className="generate-btn"
+          onClick={onGenerate}
+          disabled={!canGenerate}
+        >
+          Generate PDF
+        </button>
+        <button
+          className="download-btn"
+          onClick={handleDownload}
+          disabled={!pdfUrl}
+          title={pdfFilename || 'Download PDF'}
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
