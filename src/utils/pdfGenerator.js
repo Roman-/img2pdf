@@ -117,22 +117,38 @@ export function generatePdf({
       doc.addImage(img.dataUrl, 'PNG', imgX, imgY, renderWMm, renderHMm);
     }
 
-    // Draw grid lines if enabled
-    if (gridEnabled) {
+    // Draw grid lines if enabled (solid or dashed)
+    if (gridEnabled && gridEnabled !== 'none') {
       const [r, g, b] = hexToRgb(gridColor);
       doc.setDrawColor(r, g, b);
       doc.setLineWidth(gridThickness);
 
+      // Set line style based on gridEnabled value
+      const isDashed = gridEnabled === 'dashed';
+      const dashLength = isDashed ? 2 : 0;
+      const gapLength = isDashed ? 2 : 0;
+
       // Draw vertical lines between columns
       for (let c = 1; c < cols; c++) {
         const x = MARGIN_MM + c * cellW + (c - 1) * GAP_MM + GAP_MM / 2;
+        if (isDashed) {
+          doc.setLineDashPattern([dashLength, gapLength], 0);
+        }
         doc.line(x, MARGIN_MM, x, pageH - MARGIN_MM);
       }
 
       // Draw horizontal lines between rows
       for (let r = 1; r < rows; r++) {
         const y = MARGIN_MM + r * cellH + (r - 1) * GAP_MM + GAP_MM / 2;
+        if (isDashed) {
+          doc.setLineDashPattern([dashLength, gapLength], 0);
+        }
         doc.line(MARGIN_MM, y, pageW - MARGIN_MM, y);
+      }
+
+      // Reset dash pattern for subsequent operations
+      if (isDashed) {
+        doc.setLineDashPattern([], 0);
       }
     }
   }

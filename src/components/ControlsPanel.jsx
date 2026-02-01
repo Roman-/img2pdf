@@ -85,17 +85,17 @@ export function ControlsPanel({
       </div>
 
       <div className="control-group">
-        <h3>Grid Lines</h3>
-        <div className="control-row checkbox-row">
-          <input
-            type="checkbox"
-            id="gridEnabled"
-            checked={gridEnabled}
-            onChange={(e) => setGridEnabled(e.target.checked)}
-          />
-          <label htmlFor="gridEnabled">Draw internal grid lines</label>
-        </div>
-        {gridEnabled && (
+        <select
+          id="gridEnabled"
+          value={gridEnabled}
+          onChange={(e) => setGridEnabled(e.target.value)}
+          className="separator-select"
+        >
+          <option value="none">No separators</option>
+          <option value="solid">Solid line separator</option>
+          <option value="dashed">Dashed line separator</option>
+        </select>
+        {gridEnabled !== 'none' && (
           <>
             <div className="control-row">
               <label htmlFor="gridColor">Color</label>

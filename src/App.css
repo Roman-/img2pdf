@@ -166,6 +166,26 @@
   cursor: pointer;
 }
 
+.separator-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  background: white;
+  cursor: pointer;
+  color: #2c3e50;
+}
+
+.separator-select:hover {
+  border-color: #bdc3c7;
+}
+
+.separator-select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
 .control-row input[type="color"] {
   width: 40px;
   height: 32px;

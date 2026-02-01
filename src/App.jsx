@@ -64,7 +64,7 @@ function App() {
   const [orientation, setOrientation] = useState('portrait');
 
   // Grid line state
-  const [gridEnabled, setGridEnabled] = useState(true);
+  const [gridEnabled, setGridEnabled] = useState('solid');
   const [gridColor, setGridColor] = useState('#c4c4c4');
   const [gridThickness, setGridThickness] = useState(0.5);
 
