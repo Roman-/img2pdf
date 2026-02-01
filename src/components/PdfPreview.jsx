@@ -1,7 +1,12 @@
-export function PdfPreview({ pdfUrl }) {
+export function PdfPreview({ pdfUrl, isGenerating }) {
   return (
     <div className="pdf-preview">
-      {pdfUrl ? (
+      {isGenerating ? (
+        <div className="pdf-placeholder">
+          <div className="spinner"></div>
+          <p>Generating PDF...</p>
+        </div>
+      ) : pdfUrl ? (
         <iframe
           src={pdfUrl}
           title="PDF Preview"

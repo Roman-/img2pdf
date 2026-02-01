@@ -73,7 +73,9 @@ function App() {
 
   // PDF state
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const prevPdfUrlRef = useRef(null);
+  const generateTimeoutRef = useRef(null);
 
   // Error state
   const [errors, setErrors] = useState([]);
@@ -115,10 +117,20 @@ function App() {
   const handleImagesLoaded = useCallback((loadedImages) => {
     setImages(loadedImages);
 
+    // Clear any pending generation
+    if (generateTimeoutRef.current) {
+      clearTimeout(generateTimeoutRef.current);
+    }
+
     // Auto-generate PDF if < 40 images
     if (loadedImages.length >= 2 && loadedImages.length < 40) {
-      const url = createPdfUrl(loadedImages, { rows, cols, orientation, gridEnabled, gridColor, gridThickness, imageOrder });
-      setPdfUrl(url);
+      setIsGenerating(true);
+      // Delay generation to let UI update first
+      generateTimeoutRef.current = setTimeout(() => {
+        const url = createPdfUrl(loadedImages, { rows, cols, orientation, gridEnabled, gridColor, gridThickness, imageOrder });
+        setPdfUrl(url);
+        setIsGenerating(false);
+      }, 100);
     } else {
       // Clear PDF for invalid counts
       if (prevPdfUrlRef.current) {
@@ -126,6 +138,7 @@ function App() {
         prevPdfUrlRef.current = null;
       }
       setPdfUrl(null);
+      setIsGenerating(false);
     }
   }, [createPdfUrl, rows, cols, orientation, gridEnabled, gridColor, gridThickness, imageOrder]);
 
@@ -190,7 +203,7 @@ function App() {
           />
         </div>
         <div className="right-panel">
-          <PdfPreview pdfUrl={pdfUrl} />
+          <PdfPreview pdfUrl={pdfUrl} isGenerating={isGenerating} />
         </div>
       </main>
     </div>
